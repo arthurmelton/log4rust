@@ -18,6 +18,15 @@ pub enum Log {
     _None,
 }
 
+pub enum Backtrace {
+    /// This will print no stack trace
+    _None,
+    /// This is going to just print the file, line number, and collom number
+    Simple,
+    /// This is going to print a full backtrace
+    Complex,
+}
+
 #[derive(PartialEq)]
 pub enum Time {
     UTC,
@@ -30,10 +39,10 @@ pub enum Time {
 /// ```
 /// log4rust::new()
 ///     .time(Time::Local)
-///     .set_type(Log::Info)?.color(Color::TrueColor{r:0,g:255,b:255})?.console(true)?
-///     .set_type(Log::Warn)?.color(Color::TrueColor{r:255,g:215,b:185})?.console(true)?
-///     .set_type(Log::Error)?.color(Color::TrueColor{r:255,g:100,b:0})?.console(true)?
-///     .set_type(Log::Fatal)?.color(Color::TrueColor{r:255,g:0,b:0})?.console(true)?
+///     .set_type(Log::Info)?.color(Color::TrueColor{r:0,g:255,b:255})?.console(true)?.backtrace(Backtrace::_None)?
+///     .set_type(Log::Warn)?.color(Color::TrueColor{r:255,g:215,b:185})?.console(true)?.backtrace(Backtrace::_None)?
+///     .set_type(Log::Error)?.color(Color::TrueColor{r:255,g:100,b:0})?.console(true)?.backtrace(Backtrace::Simple)?
+///     .set_type(Log::Fatal)?.color(Color::TrueColor{r:255,g:0,b:0})?.console(true)?.backtrace(Backtrace::Complex)?
 ///     .save()
 ///     .unwrap();
 /// ```
@@ -92,6 +101,15 @@ pub struct Config {
     pub error_file: Vec<String>,
     #[doc(hidden)]
     pub fatal_file: Vec<String>,
+    // backtrace
+    #[doc(hidden)]
+    pub info_backtrace: Backtrace,
+    #[doc(hidden)]
+    pub warn_backtrace: Backtrace,
+    #[doc(hidden)]
+    pub error_backtrace: Backtrace,
+    #[doc(hidden)]
+    pub fatal_backtrace: Backtrace,
     // private
     working_on: Log,
 }
@@ -131,6 +149,10 @@ pub fn new() -> Config {
         warn_file: Vec::new(),
         error_file: Vec::new(),
         fatal_file: Vec::new(),
+        info_backtrace: Backtrace::_None,
+        warn_backtrace: Backtrace::_None,
+        error_backtrace: Backtrace::Simple,
+        fatal_backtrace: Backtrace::Complex,
         working_on: Log::_None,
     }
 }
@@ -154,6 +176,23 @@ impl Config {
                 return Err(Error::new(
                     ErrorKind::Other,
                     "You need to set a log type before you can set the color",
+                ))
+            }
+        }
+        Ok(self)
+    }
+    
+    /// This will change the backtrace of a type when it is printed to the console
+    pub fn backtrace(mut self, backtrace: Backtrace) -> Result<Self, Error> {
+        match self.working_on {
+            Log::Info => self.info_backtrace = backtrace,
+            Log::Warn => self.warn_backtrace = backtrace,
+            Log::Error => self.error_backtrace = backtrace,
+            Log::Fatal => self.fatal_backtrace = backtrace,
+            Log::_None => {
+                return Err(Error::new(
+                    ErrorKind::Other,
+                    "You need to set a log type before you can set the backtrace",
                 ))
             }
         }

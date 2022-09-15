@@ -24,3 +24,5 @@ pub use colored::Color;
 pub use colored::Colorize;
 pub use config::*;
 pub use ureq;
+#[doc(hidden)]
+pub use backtrace;

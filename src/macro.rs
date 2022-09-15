@@ -39,7 +39,7 @@ macro_rules! fatal {
 macro_rules! log4rust_template {
     ( $type:expr, $write:expr ) => {
         {
-            use log4rust::Colorize;
+            use log4rust::{Colorize, Backtrace, Log};
             use log4rust::chrono::prelude::*;
             use std::fs::OpenOptions;
             use std::io::Write;
@@ -48,7 +48,20 @@ macro_rules! log4rust_template {
                     let time = if config.time == Time::UTC {format!("[{}]", Utc::now())}
                     else {format!("[{}]", Local::now())};
 
-                    let text = format!("{} {}", time, $write);
+                    let backtrace = match $type {
+                        "info" => &config.info_backtrace,
+                        "warn" => &config.warn_backtrace,
+                        "error" => &config.error_backtrace,
+                        _ => &config.fatal_backtrace,
+                    };
+
+                    let backtrace_string = match backtrace {
+                        Backtrace::_None => "".to_string(),
+                        Backtrace::Simple => format!(" ({}:{}:{})", file!(), line!(), column!()),
+                        Backtrace::Complex => format!("\n{:?}", log4rust::backtrace::Backtrace::new()),
+                    };
+
+                    let text = format!("{} {}{}", time, $write, backtrace_string);
                     
                     let console = match $type {
                         "info" => config.info_console,
