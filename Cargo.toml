@@ -1,0 +1,16 @@
+[package]
+name = "log4rust"
+version = "0.1.0"
+edition = "2021"
+description = "A logging system for rust that is trying to be as easy as possiable to impliment"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/AMTitan/log4rust"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.22"
+colored = "2.0.0"
+lazy_static = "1.4.0"
+ureq = "2.5.0"
