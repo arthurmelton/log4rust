@@ -39,7 +39,7 @@ macro_rules! fatal {
 macro_rules! log4rust_template {
     ( $type:expr, $write:expr ) => {
         {
-            use log4rust::{Colorize, Backtrace, Log};
+            use log4rust::*;
             use log4rust::chrono::prelude::*;
             use std::fs::OpenOptions;
             use std::io::Write;
