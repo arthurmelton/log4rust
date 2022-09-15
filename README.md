@@ -16,3 +16,6 @@ fn main() {
 ```
 
 You can also look in the exmaples folder to see how to do some other things
+
+Crate: [https://crates.io/crates/log4rust](https://crates.io/crates/log4rust)
+Docs: [https://docs.rs/log4rust](https://docs.rs/log4rust)
