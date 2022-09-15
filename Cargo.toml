@@ -1,6 +1,6 @@
 [package]
 name = "log4rust"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A logging system for rust that is trying to be as easy as possiable to impliment"
 license = "MIT"
