@@ -24,7 +24,7 @@ pub enum Time {
     Local,
 }
 
-/// To configure the logger you will use some different functions. (listed under Implementations) <br>
+/// To configure the logger you will use some different functions. <br>
 /// This is how the default configuration would look if written out:
 ///
 /// ```
@@ -50,28 +50,47 @@ pub enum Time {
 /// You can see that we only change one of the items and all the rest are the same. We also change
 /// it so that time will be saved in UTC and not in local time.
 /// 
+/// If you want to see some other examples look in
+/// [https://github.com/AMTitan/log4rust/tree/master/examples](https://github.com/AMTitan/log4rust/tree/master/examples)
 pub struct Config {
     // time
+    #[doc(hidden)]
     pub time: Time,
     // colors
+    #[doc(hidden)]
     pub info_color: Color,
+    #[doc(hidden)]
     pub warn_color: Color,
+    #[doc(hidden)]
     pub error_color: Color,
+    #[doc(hidden)]
     pub fatal_color: Color,
     // console
+    #[doc(hidden)]
     pub info_console: bool,
+    #[doc(hidden)]
     pub warn_console: bool,
+    #[doc(hidden)]
     pub error_console: bool,
+    #[doc(hidden)]
     pub fatal_console: bool,
     // web
+    #[doc(hidden)]
     pub info_web: Vec<(Request, String)>,
+    #[doc(hidden)]
     pub warn_web: Vec<(Request, String)>,
+    #[doc(hidden)]
     pub error_web: Vec<(Request, String)>,
+    #[doc(hidden)]
     pub fatal_web: Vec<(Request, String)>,
     // files
+    #[doc(hidden)]
     pub info_file: Vec<String>,
+    #[doc(hidden)]
     pub warn_file: Vec<String>,
+    #[doc(hidden)]
     pub error_file: Vec<String>,
+    #[doc(hidden)]
     pub fatal_file: Vec<String>,
     // private
     working_on: Log,
