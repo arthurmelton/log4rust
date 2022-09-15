@@ -1,7 +1,7 @@
 #![crate_type = "lib"]
 
 //! Loggerz is a logging system that is made to be as easy as possiable! <br>
-//! Look in [config](/log4rust/struct.Config.html) to see how to customize the logger.
+//! Look in [config](https://docs.rs/log4rust/latest/log4rust/struct.Config.html) to see how to customize the logger.
 //!
 //! # Example
 //! ```
