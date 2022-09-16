@@ -63,8 +63,10 @@ macro_rules! log4rust_template {
 
                     let text = format!("{} {}{}", time, $write, backtrace_string);
 
-                    if config.console[index] {
-                        println!("{}", text.color(config.color[index]));
+                    match config.console[index] {
+                        Console::_None => {}
+                        Console::Stdout => println!("{}", text.color(config.color[index])),
+                        Console::Stderr => eprintln!("{}", text.color(config.color[index])),
                     }
 
                     for (request, format) in &config.web[index] {

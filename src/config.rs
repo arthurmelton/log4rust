@@ -34,16 +34,22 @@ pub enum Time {
     Local,
 }
 
+pub enum Console {
+    _None,
+    Stdout,
+    Stderr,
+}
+
 /// To configure the logger you will use some different functions. <br>
 /// This is how the default configuration would look if written out:
 ///
 /// ```
 /// log4rust::new()
 ///     .time(Time::Local)
-///     .set_type(Log::Info)?.color(Color::TrueColor{r:0,g:255,b:255})?.console(true)?.backtrace(Backtrace::_None)?
-///     .set_type(Log::Warn)?.color(Color::TrueColor{r:255,g:215,b:185})?.console(true)?.backtrace(Backtrace::_None)?
-///     .set_type(Log::Error)?.color(Color::TrueColor{r:255,g:100,b:0})?.console(true)?.backtrace(Backtrace::Simple)?
-///     .set_type(Log::Fatal)?.color(Color::TrueColor{r:255,g:0,b:0})?.console(true)?.backtrace(Backtrace::Complex)?
+///     .set_type(Log::Info)?.color(Color::TrueColor{r:0,g:255,b:255})?.console(Console::Stdout)?.backtrace(Backtrace::_None)?
+///     .set_type(Log::Warn)?.color(Color::TrueColor{r:255,g:215,b:185})?.console(Console::Stderr)?.backtrace(Backtrace::_None)?
+///     .set_type(Log::Error)?.color(Color::TrueColor{r:255,g:100,b:0})?.console(Console::Stderr)?.backtrace(Backtrace::Simple)?
+///     .set_type(Log::Fatal)?.color(Color::TrueColor{r:255,g:0,b:0})?.console(Console::Stderr)?.backtrace(Backtrace::Complex)?
 ///     .save()
 ///     .unwrap();
 /// ```
@@ -73,7 +79,7 @@ pub struct Config {
     #[doc(hidden)]
     pub color: [Color; 4],
     #[doc(hidden)]
-    pub console: [bool; 4],
+    pub console: [Console; 4],
     #[doc(hidden)]
     pub web: [Vec<(Request, String)>; 4],
     #[doc(hidden)]
@@ -105,7 +111,7 @@ pub fn new() -> Config {
             },
             Color::TrueColor { r: 255, g: 0, b: 0 },
         ],
-        console: [true, true, true, true],
+        console: [Console::Stdout, Console::Stderr, Console::Stderr, Console::Stderr],
         web: [Vec::new(), Vec::new(), Vec::new(), Vec::new()],
         file: [Vec::new(), Vec::new(), Vec::new(), Vec::new()],
         backtrace: [
@@ -145,11 +151,11 @@ impl Config {
     }
 
     /// This will set if this type will be printed to the console or not
-    pub fn console(mut self, _bool: bool) -> Result<Self, Error> {
+    pub fn console(mut self, console: Console) -> Result<Self, Error> {
         self.console[index(
             self.working_on.clone(),
             "You need to set a log type before you can set if it goes to the terminal",
-        )?] = _bool;
+        )?] = console;
         Ok(self)
     }
 
