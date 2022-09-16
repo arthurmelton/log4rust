@@ -18,11 +18,11 @@
 mod config;
 mod r#macro;
 #[doc(hidden)]
+pub use backtrace;
+#[doc(hidden)]
 pub use chrono;
 pub use colored::Color;
 #[doc(hidden)]
 pub use colored::Colorize;
 pub use config::*;
 pub use ureq;
-#[doc(hidden)]
-pub use backtrace;

@@ -49,7 +49,7 @@ pub enum Time {
 /// ```
 ///
 /// If you wanted to change something from the norm you could do
-/// 
+///
 /// ```
 /// log4rust::new()
 ///    .time(Time::UTC)
@@ -59,17 +59,15 @@ pub enum Time {
 /// ```
 /// You can see that we only change one of the items and all the rest are the same. We also change
 /// it so that time will be saved in UTC and not in local time.
-/// 
+///
 /// If you want to see some other examples look in
 /// [https://github.com/AMTitan/log4rust/tree/master/examples](https://github.com/AMTitan/log4rust/tree/master/examples)
 pub struct Config {
-    
     // this is an array with the length of 4 because
     // info = 0
     // warn = 1
     // error = 2
     // fatal = 3
-
     #[doc(hidden)]
     pub time: Time,
     #[doc(hidden)]
@@ -89,30 +87,33 @@ pub struct Config {
 pub fn new() -> Config {
     Config {
         time: Time::Local,
-        color: [Color::TrueColor {
-            r: 0,
-            g: 255,
-            b: 255,
-        },
-        Color::TrueColor {
-            r: 255,
-            g: 215,
-            b: 185,
-        },
-        Color::TrueColor {
-            r: 255,
-            g: 100,
-            b: 0,
-        },
-        Color::TrueColor { 
-            r: 255, 
-            g: 0, 
-            b: 0
-        }],
+        color: [
+            Color::TrueColor {
+                r: 0,
+                g: 255,
+                b: 255,
+            },
+            Color::TrueColor {
+                r: 255,
+                g: 215,
+                b: 185,
+            },
+            Color::TrueColor {
+                r: 255,
+                g: 100,
+                b: 0,
+            },
+            Color::TrueColor { r: 255, g: 0, b: 0 },
+        ],
         console: [true, true, true, true],
         web: [Vec::new(), Vec::new(), Vec::new(), Vec::new()],
         file: [Vec::new(), Vec::new(), Vec::new(), Vec::new()],
-        backtrace: [Backtrace::_None, Backtrace::_None, Backtrace::Simple, Backtrace::Complex],
+        backtrace: [
+            Backtrace::_None,
+            Backtrace::_None,
+            Backtrace::Simple,
+            Backtrace::Complex,
+        ],
         working_on: Log::_None,
     }
 }
@@ -127,19 +128,28 @@ impl Config {
 
     /// This will change the color of a type when it is printed to the console
     pub fn color(mut self, color: Color) -> Result<Self, Error> {
-        self.color[index(self.working_on.clone(), "You need to set a log type before you can set the color")?] = color;
+        self.color[index(
+            self.working_on.clone(),
+            "You need to set a log type before you can set the color",
+        )?] = color;
         Ok(self)
     }
-    
+
     /// This will change the backtrace of a type when it is printed to the console
     pub fn backtrace(mut self, backtrace: Backtrace) -> Result<Self, Error> {
-        self.backtrace[index(self.working_on.clone(), "You need to set a log type before you can set the backtrace")?] = backtrace;
+        self.backtrace[index(
+            self.working_on.clone(),
+            "You need to set a log type before you can set the backtrace",
+        )?] = backtrace;
         Ok(self)
     }
 
     /// This will set if this type will be printed to the console or not
     pub fn console(mut self, _bool: bool) -> Result<Self, Error> {
-        self.console[index(self.working_on.clone(), "You need to set a log type before you can set if it goes to the terminal")?] = _bool;
+        self.console[index(
+            self.working_on.clone(),
+            "You need to set a log type before you can set if it goes to the terminal",
+        )?] = _bool;
         Ok(self)
     }
 
@@ -147,14 +157,22 @@ impl Config {
     /// also have multiple of these so it will make multiple requests for every time this type
     /// fires. This would be most useful for a webhook.
     pub fn web(mut self, format: &str, request: Request) -> Result<Self, Error> {
-        self.web[index(self.working_on.clone(), "You need to set a log type before you can set where it should be sent to")?].push((request, format.to_string()));
+        self.web[index(
+            self.working_on.clone(),
+            "You need to set a log type before you can set where it should be sent to",
+        )?]
+        .push((request, format.to_string()));
         Ok(self)
     }
 
     /// This will make it so that every time this type fires it will add it to the end of a file.
     /// You can have multiple files that it will be added to.
     pub fn file(mut self, file: &str) -> Result<Self, Error> {
-        self.file[index(self.working_on.clone(), "You need to set a log type before you can set where it should be sent to")?].push(file.to_string());
+        self.file[index(
+            self.working_on.clone(),
+            "You need to set a log type before you can set where it should be sent to",
+        )?]
+        .push(file.to_string());
         Ok(self)
     }
 
@@ -187,11 +205,6 @@ fn index(working_on: Log, if_none: &str) -> Result<usize, Error> {
         Log::Warn => Ok(1),
         Log::Error => Ok(2),
         Log::Fatal => Ok(3),
-        Log::_None => {
-            return Err(Error::new(
-                ErrorKind::Other,
-                if_none
-            ))
-        }
+        Log::_None => return Err(Error::new(ErrorKind::Other, if_none)),
     }
 }
