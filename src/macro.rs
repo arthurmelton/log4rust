@@ -48,14 +48,14 @@ macro_rules! log4rust_template {
                     let time = if config.time == Time::UTC {format!("[{}]", Utc::now())}
                     else {format!("[{}]", Local::now())};
 
-                    let backtrace = match $type {
-                        "info" => &config.info_backtrace,
-                        "warn" => &config.warn_backtrace,
-                        "error" => &config.error_backtrace,
-                        _ => &config.fatal_backtrace,
+                    let index = match $type {
+                        "info" => 0,
+                        "warn" => 1,
+                        "error" => 2,
+                        _ => 3
                     };
 
-                    let backtrace_string = match backtrace {
+                    let backtrace_string = match &config.backtrace[index] {
                         Backtrace::_None => "".to_string(),
                         Backtrace::Simple => format!(" ({}:{}:{})", file!(), line!(), column!()),
                         Backtrace::Complex => format!("\n{:?}", log4rust::backtrace::Backtrace::new()),
@@ -63,44 +63,18 @@ macro_rules! log4rust_template {
 
                     let text = format!("{} {}{}", time, $write, backtrace_string);
                     
-                    let console = match $type {
-                        "info" => config.info_console,
-                        "warn" => config.warn_console,
-                        "error" => config.error_console,
-                        _ => config.fatal_console
-                    };
-
-                    if console {
-                        println!("{}", text.color(match $type {
-                            "info" => config.info_color,
-                            "warn" => config.warn_color,
-                            "error" => config.error_color,
-                            _ => config.fatal_color,
-                        }));
+                    if config.console[index] {
+                        println!("{}", text.color(config.color[index]));
                     }
 
-                    let web = match $type {
-                        "info" => &config.info_web,
-                        "warn" => &config.warn_web,
-                        "error" => &config.error_web,
-                        _ => &config.fatal_web
-                    };
-
-                    for (request, format) in web {
+                    for (request, format) in &config.web[index] {
                         match request.clone().send_string(&format.replace("{}", &text)) {
                             Ok(_) => {},
-                            Err(e) => println!("{}", format!("Failed to send a http request as a {} and wanted to send '{}', Request error: {:?}", $type, text, e).color(config.fatal_color)),
+                            Err(e) => println!("{}", format!("Failed to send a http request as a {} and wanted to send '{}', Request error: {:?}", $type, text, e).color(config.color[3])),
                         }
                     }
 
-                    let file = match $type {
-                        "info" => &config.info_file,
-                        "warn" => &config.warn_file,
-                        "error" => &config.error_file,
-                        _ => &config.fatal_file
-                    };
-
-                    for i in file {
+                    for i in &config.file[index] {
                         match OpenOptions::new()
                             .create(true)
                             .write(true)
@@ -108,9 +82,9 @@ macro_rules! log4rust_template {
                             .open(i) {
                                 Ok(mut file) => match writeln!(file, "{}", text) {
                                     Ok(_) => {},
-                                    Err(e) => println!("{}", format!("Couldn't write to file: {}, wanted to write '{}' as a {}, error: {:?}", e, text, $type, e).color(config.fatal_color)),
+                                    Err(e) => println!("{}", format!("Couldn't write to file: {}, wanted to write '{}' as a {}, error: {:?}", e, text, $type, e).color(config.color[3])),
                                 },
-                                Err(e) => println!("{}", format!("Couldn't create OpenOptions for file {}, wanted to write {} as a {}, error: {:?}", i, text, $type, e).color(config.fatal_color)),
+                                Err(e) => println!("{}", format!("Couldn't create OpenOptions for file {}, wanted to write {} as a {}, error: {:?}", i, text, $type, e).color(config.color[3])),
                             }
                     }
                 },
