@@ -1,4 +1,5 @@
 #![crate_type = "lib"]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 //! Loggerz is a logging system that is made to be as easy as possiable! <br>
 //! Look in [config](https://docs.rs/log4rust/latest/log4rust/struct.Config.html) to see how to customize the logger.
