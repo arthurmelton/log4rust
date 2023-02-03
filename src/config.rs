@@ -190,7 +190,7 @@ impl Config {
     /// This will make it so that you can make a request every time this type goes off. You can
     /// also have multiple of these so it will make multiple requests for every time this type
     /// fires. This would be most useful for a webhook.
-    #[or(cfg(feature = "web"), doc(cfg(feature = "web")))]
+    #[cfg(feature = "web")]
     pub fn web(mut self, format: &str, request: Request) -> Result<Self, Error> {
         self.web[index(
             self.working_on.clone(),
