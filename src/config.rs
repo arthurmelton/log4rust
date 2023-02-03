@@ -2,6 +2,8 @@ use colored::Color;
 use lazy_static::lazy_static;
 use std::io::{Error, ErrorKind};
 use std::sync::{Mutex, MutexGuard, PoisonError};
+use std::fmt;
+#[cfg(feature = "web")]
 use ureq::Request;
 
 lazy_static! {
@@ -17,6 +19,18 @@ pub enum Log {
     Fatal,
     #[doc(hidden)]
     _None,
+}
+
+impl fmt::Debug for Log {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Log::Info => write!(f, "info"),
+            Log::Warn => write!(f, "warn"),
+            Log::Error => write!(f, "error"),
+            Log::Fatal => write!(f, "fatal"),
+            Log::_None => write!(f, ""),
+        }
+    }
 }
 
 pub enum Backtrace {
@@ -71,7 +85,7 @@ pub enum Console {
 /// ```
 /// log4rust::new()
 ///    .time(Time::UTC)
-///    .set_type(Log::Info)?.console(false)?
+///    .set_type(Log::Info)?.console(Console::_None)?
 ///    .save()
 ///    .unwrap();
 /// ```
@@ -93,6 +107,7 @@ pub struct Config {
     #[doc(hidden)]
     pub console: [Console; 4],
     #[doc(hidden)]
+    #[cfg(feature = "web")]
     pub web: [Vec<(Request, String)>; 4],
     #[doc(hidden)]
     pub file: [Vec<String>; 4],
@@ -124,6 +139,7 @@ pub fn new() -> Config {
             Color::TrueColor { r: 255, g: 0, b: 0 },
         ],
         console: [Console::Stdout, Console::Stderr, Console::Stderr, Console::Stderr],
+        #[cfg(feature = "web")]
         web: [Vec::new(), Vec::new(), Vec::new(), Vec::new()],
         file: [Vec::new(), Vec::new(), Vec::new(), Vec::new()],
         backtrace: [
@@ -174,6 +190,7 @@ impl Config {
     /// This will make it so that you can make a request every time this type goes off. You can
     /// also have multiple of these so it will make multiple requests for every time this type
     /// fires. This would be most useful for a webhook.
+    #[cfg(feature = "web")]
     pub fn web(mut self, format: &str, request: Request) -> Result<Self, Error> {
         self.web[index(
             self.working_on.clone(),

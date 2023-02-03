@@ -25,4 +25,7 @@ pub use colored::Color;
 #[doc(hidden)]
 pub use colored::Colorize;
 pub use config::*;
+#[doc(hidden)]
+pub use r#macro::*;
+#[cfg(feature = "web")]
 pub use ureq;

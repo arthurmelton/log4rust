@@ -1,6 +1,6 @@
 [package]
 name = "log4rust"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 description = "A logging system for rust that is trying to be as easy as possiable to impliment"
 license = "MIT"
@@ -14,4 +14,7 @@ backtrace = "0.3.66"
 chrono = "0.4.22"
 colored = "2.0.0"
 lazy_static = "1.4.0"
-ureq = "2.5.0"
+ureq = {version = "2.5.0", optional = true}
+
+[features]
+web = ["dep:ureq"]
